@@ -1,4 +1,4 @@
-name: Node.js CI (Yarn)
+name: Node.js CI + Deploy to Vercel
 
 on:
   push:
@@ -8,7 +8,6 @@ on:
 
 jobs:
   build-and-test:
-    name: Build, Lint, Test, and Coverage
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -41,3 +40,26 @@ jobs:
         with:
           name: coverage-report
           path: coverage/
+
+  deploy:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Vercel CLI
+        run: yarn add -D vercel
+
+      - name: Deploy to Vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          npx vercel deploy --prod --token $VERCEL_TOKEN --confirm --org $VERCEL_ORG_ID --project $VERCEL_PROJECT_ID
