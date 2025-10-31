@@ -1,8 +1,8 @@
-// eslint.config.js
-import js from "@eslint/js";
-import globals from "globals";
+// eslint.config.js (CommonJS version)
+const js = require("@eslint/js");
+const globals = require("globals");
 
-export default [
+module.exports = [
   js.configs.recommended,
   {
     languageOptions: {
@@ -12,8 +12,6 @@ export default [
         ...globals.mocha,
       },
     },
-    rules: {
-      // your custom rules here
-    },
+    rules: {},
   },
 ];
